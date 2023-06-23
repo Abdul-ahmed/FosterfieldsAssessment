@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\V1\Api\User\UserController;
+use App\Http\Controllers\V1\Api\User\WalletTypeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Response;
@@ -24,6 +25,7 @@ Route::group([
     'prefix' => '/v1/user',
     'middleware' => ['headers.authorization']
 ], function () {
+    Route::get('/wallet-types', [WalletTypeController::class, 'getWalletTypes'])->name('wallet.types');
     Route::post('/create-user', [UserController::class, 'createUser'])->name('user.create');
 
 });
@@ -32,14 +34,8 @@ Route::group([
     'prefix' => '/v1/admin',
     'middleware' => ['headers.authorization']
 ], function () {
-    Route::get('/', function () {
-        return response()->json([
-            "status" => "success",
-            "code" => Response::HTTP_OK,
-            "message" => "Welcome to admin",
-            "data" => null
-        ]);
-    })->name('admin');
+    Route::get('/users', [\App\Http\Controllers\V1\Api\Admin\UserController::class, 'getUsers'])->name('users.fetch');
+    Route::get('/user/{user_uuid}', [\App\Http\Controllers\V1\Api\Admin\UserController::class, 'getUser'])->name('user.fetch');
 });
 
 Route::group([

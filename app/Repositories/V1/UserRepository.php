@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 
 interface UserRepository
 {
-    public function createUser();
+    public function createUser(array $request);
 
+    public function users();
+
+    public function user($userUuid);
 }
