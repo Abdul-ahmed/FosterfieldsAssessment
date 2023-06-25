@@ -17,9 +17,20 @@ class Wallet extends Model
         'status'
     ];
 
+    protected $hidden = [
+        'id',
+        'user_id',
+        'wallet_type_id',
+    ];
+
     public function walletType()
     {
         return $this->hasOne(WalletType::class, 'id', 'wallet_type_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
 }

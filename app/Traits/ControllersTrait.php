@@ -24,4 +24,22 @@ trait ControllersTrait
         ], $code);
     }
 
+    public function authToken($user)
+    {
+        $tokenResult = $user->createToken('Personal Access Token');
+        $accessToken = $tokenResult->accessToken;
+        $expiresIn = $tokenResult->token->expires_at;
+        return [
+            "access_token" => $accessToken,
+            "expires_in" => $expiresIn
+        ];
+    }
+
+    public function lastLogin($user)
+    {
+        $user->update([
+            "last_login" => now()
+        ]);
+    }
+
 }

@@ -42,11 +42,11 @@ class UserController extends Controller
         }
 
         $wallets = $this->walletRepository->walletsByUserId($user->id);
-        // $transactions = $this->transactionRepository->userTransactions($user->id);
+        $transactions = $this->transactionRepository->userTransactions($user->id);
         return $this->successResponse("Record fetched successfully", [
             "user" => $user,
             "wallets" => $wallets,
-            // "transactions" => $transactions
+            "transactions" => $transactions
         ], Response::HTTP_OK);
     }
 }

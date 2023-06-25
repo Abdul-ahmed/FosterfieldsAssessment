@@ -17,4 +17,9 @@ class WalletTypeService implements WalletTypeRepository
         return WalletType::first();
     }
 
+    public function walletTypeByUuid($uuid)
+    {
+        return WalletType::where(['uuid' => $uuid])->first();
+    }
+
 }

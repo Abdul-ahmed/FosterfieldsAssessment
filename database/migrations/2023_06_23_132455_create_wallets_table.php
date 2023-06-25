@@ -14,9 +14,8 @@ return new class extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid');
-            $table->unsignedBigInteger('user_id')->unique();
-            $table->foreign('user_id')->references('id')->on('users');
-            $table->unsignedMediumInteger('wallet_type_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedSmallInteger('wallet_type_id');
             $table->decimal('balance')->default(0);
             $table->boolean('status')->default(1);
             $table->timestamps();

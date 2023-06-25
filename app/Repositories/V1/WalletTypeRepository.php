@@ -9,4 +9,6 @@ interface WalletTypeRepository
     public function walletTypes();
 
     public function defaultWallet();
+
+    public function walletTypeByUuid($uuid);
 }

@@ -8,6 +8,7 @@ use App\Repositories\V1\WalletRepository;
 use App\Repositories\V1\WalletTypeRepository;
 use App\Traits\ControllersTrait;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rules\Password;
@@ -51,7 +52,10 @@ class UserController extends Controller
             $defaultWalletType = $this->walletTypeRepository->defaultWallet();
             $this->walletRepository->createDefaultWallet($createdUser->id, $defaultWalletType->id);
         }
-        return $this->successResponse("User created successfully", ["uuid" => $createdUser->uuid], Response::HTTP_CREATED);
+
+        $this->lastLogin($createdUser);
+        $auth = $this->authToken($createdUser);
+        return $this->successResponse("User created successfully", $auth, Response::HTTP_CREATED);
     }
 
     public function validateCreateUserRequest()
@@ -67,5 +71,39 @@ class UserController extends Controller
         ]);
     }
 
+    public function login()
+    {
+        $requestValidator = $this->validateLoginRequest();
+        if ($requestValidator->fails()) {
+            return $this->failureResponse($requestValidator->errors()->first(), null, Response::HTTP_BAD_REQUEST);
+        }
+
+        $login = $this->userRepository->login($this->request->all());
+        if (!$login) {
+            return $this->failureResponse('Invalid email or password', [], Response::HTTP_BAD_REQUEST);
+        }
+
+        $this->lastLogin($login);
+        $auth = $this->authToken($login);
+        return $this->successResponse("User authenticated successfully", $auth, Response::HTTP_OK);
+    }
+
+    public function validateLoginRequest()
+    {
+        return Validator::make($this->request->all(), [
+            "email" => self::REQUIRED_STRING."|email",
+            "password" => ["required", "string"]
+        ]);
+    }
+
+    public function userDetails()
+    {
+        $user = Auth::guard('api')->user();
+        $wallets = $this->walletRepository->walletsByUserId($user->id);
+        return $this->successResponse("Record fetched successfully", [
+            "user" => $user,
+            "wallets" => $wallets
+        ], Response::HTTP_OK);
+    }
 
 }

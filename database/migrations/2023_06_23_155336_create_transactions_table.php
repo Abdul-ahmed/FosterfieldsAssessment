@@ -13,7 +13,20 @@ return new class extends Migration
     {
         Schema::create('transactions', function (Blueprint $table) {
             $table->id();
+            $table->uuid('uuid');
+            $table->string('reference')->unique();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('from_wallet_id');
+            $table->string('currency');
+            $table->decimal('amount')->default(0);
+            $table->decimal('charges')->default(0);
+            $table->decimal('total_amount')->default(0);
+            $table->string('type');
+            $table->decimal('balance_before');
+            $table->decimal('balance_after');
+            $table->enum('status', ['pending', 'failed', 'success']);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
